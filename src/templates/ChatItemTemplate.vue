@@ -11,7 +11,7 @@
 <script>
 export default {
     name: 'listItem',
-    props:['item','targetInfo']
+    props:['item']
     ,data(){
         return {
             flagByMine : function(regNo) { 

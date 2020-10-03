@@ -1,7 +1,7 @@
 <template>
      <div class="msgList">
         <div v-for="(item, index) in list" v-bind:key="index">
-            <ChatItemTemplate v-bind:item="item" v-bind:targetInfo="targetInfo"/>
+            <ChatItemTemplate v-bind:item="item"/>
         </div>
      </div>
 </template>

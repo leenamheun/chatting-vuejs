@@ -207,8 +207,9 @@ i {
 
 .msgItem .userIcon{
     min-width: 50px;
-    width: 180px;
-    height: 60px;
+    min-height: 50px;
+    width: 80px;
+    height: 80px;
     margin: 5px;
 }
 
@@ -221,8 +222,8 @@ i {
 }
 
 .msgItem .userIcon img{
-    width: 100%;
-    height: 90%;
+    width: 80%;
+    height: 80%;
     border-radius: 50%;
 }
 

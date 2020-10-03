@@ -4,7 +4,7 @@
      
         <div class="roomHeader">
             <div class="userIcon">
-                <img src="./resources/images/chatListIcon/userInfo_1.jpg"><!-- -->
+                <img src="https://leenamheun.github.io/chatting_only_css/resources/images/chatListIcon/userInfo_2.png"><!-- -->
              </div>
             <div class="userName">Leenamehun</div>
             <i class="icon fas fa-ellipsis-v fa-fw"></i>
