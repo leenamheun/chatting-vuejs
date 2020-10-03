@@ -11,6 +11,16 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+//고유 아이디 만들기
+function guid() {
+    function s4() {
+      return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
+
+
 const fireObj = {
     getList : async function(){
         let list = [];
@@ -36,11 +46,11 @@ const fireObj = {
         });
         return obj;           
     }
-    ,getChatList : async function(){
+    ,getChatList : async function(chatId){
         let list = [];
-        const query = firebase.database().ref("Chat").orderByChild('chatId').equalTo(1);
+        const query = firebase.database().ref("Chat/"+chatId).orderByChild("regDts")
         
-        await query.once('value',
+        await query.on('value',
         function(snapshot){
             snapshot.forEach(element => {
                list.push(element.val());
@@ -48,7 +58,9 @@ const fireObj = {
         });
         return list;           
     }
-    
+    ,sendMessage : async function(obj) { 
+        firebase.database().ref('Chat/'+obj.chatId+'/'+guid()).set(obj);
+    }    
 }
 
 export default fireObj;

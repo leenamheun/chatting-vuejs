@@ -1,5 +1,5 @@
 <template>
-    <div class="chatListItem">
+    <div class="chatListItem" @click="callChat(item.chatId, item.targetMemNo)">
         <div class="userIcon">
             <img v-bind:src="'https://leenamheun.github.io/chatting_only_css/resources/images/chatListIcon/'+userInfoImage(this.item.targetMemNo)"> 
         </div>
@@ -16,14 +16,25 @@
 
 <script>
 export default {
-    name: 'listItem'
-    ,props:['item']
-    , data () {
+    props:['item','index']
+    ,data () {
         return {
             userInfoImage : function(memNo){
                 return this.$store.state.userInfoList[memNo].image;
             }
         }
+    }, methods: {
+        callChat: function(chatId,targetMemNo){
+            this.$store.dispatch('changeChatting', {chatId: chatId, target:targetMemNo});
+        }
+    }, created() { 
+        //제일 첫번째꺼 호출
+       if( this.index==0 ){
+           const chatId = this.item.chatId;
+           const targetMemNo = this.item.targetMemNo;
+        
+           this.callChat(chatId, targetMemNo);
+       } 
     }
 }
 </script>

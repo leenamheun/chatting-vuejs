@@ -190,6 +190,11 @@ i {
     display: none; /* Chrome, Safari, Opera*/
 }
 
+.noMsgList{
+    height:100%;
+    background-color: red;
+}
+
 
 .msgList{
     overflow-y:auto;
@@ -222,7 +227,7 @@ i {
 }
 
 .msgItem .userIcon img{
-    width: 80%;
+    width: 100%;
     height: 80%;
     border-radius: 50%;
 }

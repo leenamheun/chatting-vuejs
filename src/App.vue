@@ -1,18 +1,10 @@
 <template>
   <div id="app" class="frame">
       <ListHeaderTemplate/>
-     
-        <div class="roomHeader">
-            <div class="userIcon">
-                <img src="https://leenamheun.github.io/chatting_only_css/resources/images/chatListIcon/userInfo_2.png"><!-- -->
-             </div>
-            <div class="userName">Leenamehun</div>
-            <i class="icon fas fa-ellipsis-v fa-fw"></i>
-        </div>
+        <ChatHeaderComponent />
         <ChatComponent />
         <ListComponent />
-       
-       <ChatInputFormTemplate />
+     <ChatInputFormComponent />
     </div>
 </template>
 
@@ -21,10 +13,12 @@
 import "./resources/main.css";
 import "./resources/hack.css";
 import ListHeaderTemplate from "./templates/ListHeaderTemplate.vue";
-import ChatInputFormTemplate from "./templates/ChatInputFormTemplate.vue";
+import ChatInputFormComponent from "./components/ChatInputFormComponent.vue";
+
+
 import ListComponent from './components/ListComponent.vue'
 import ChatComponent from './components/ChatComponent.vue'
-
+import ChatHeaderComponent from "./components/ChatHeaderComponent";
 
 export default {
   name: 'app',
@@ -36,9 +30,15 @@ export default {
   created(){
       this.$store.dispatch("getUserInfoList");
   },
+  computed: { 
+      seen(){
+          return this.$store.state.isActiveChat.chatId != null
+      }
+        
+  },
   components:{
-      ListHeaderTemplate,ChatInputFormTemplate,
-      ListComponent, ChatComponent
+      ListHeaderTemplate,ChatInputFormComponent,
+      ListComponent, ChatComponent, ChatHeaderComponent
   }
 }
 </script>

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/public/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 10);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -12171,21 +12171,22 @@ Vue.compile = compileToFunctions;
 
 /* harmony default export */ __webpack_exports__["a"] = (Vue);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1), __webpack_require__(11).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1), __webpack_require__(14).setImmediate))
 
 /***/ }),
 /* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__resources_main_css__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__resources_main_css__ = __webpack_require__(18);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__resources_main_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__resources_main_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__resources_hack_css__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__resources_hack_css__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__resources_hack_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__resources_hack_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_ListHeaderTemplate_vue__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__templates_ChatInputFormTemplate_vue__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_ListComponent_vue__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ChatComponent_vue__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__templates_ListHeaderTemplate_vue__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_ChatInputFormComponent_vue__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_ListComponent_vue__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_ChatComponent_vue__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_ChatHeaderComponent__ = __webpack_require__(35);
 //
 //
 //
@@ -12196,14 +12197,8 @@ Vue.compile = compileToFunctions;
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
+
+
 
 
 
@@ -12223,9 +12218,15 @@ Vue.compile = compileToFunctions;
   created() {
     this.$store.dispatch("getUserInfoList");
   },
+  computed: {
+    seen() {
+      return this.$store.state.isActiveChat.chatId != null;
+    }
+
+  },
   components: {
-    ListHeaderTemplate: __WEBPACK_IMPORTED_MODULE_2__templates_ListHeaderTemplate_vue__["a" /* default */], ChatInputFormTemplate: __WEBPACK_IMPORTED_MODULE_3__templates_ChatInputFormTemplate_vue__["a" /* default */],
-    ListComponent: __WEBPACK_IMPORTED_MODULE_4__components_ListComponent_vue__["a" /* default */], ChatComponent: __WEBPACK_IMPORTED_MODULE_5__components_ChatComponent_vue__["a" /* default */]
+    ListHeaderTemplate: __WEBPACK_IMPORTED_MODULE_2__templates_ListHeaderTemplate_vue__["a" /* default */], ChatInputFormComponent: __WEBPACK_IMPORTED_MODULE_3__components_ChatInputFormComponent_vue__["a" /* default */],
+    ListComponent: __WEBPACK_IMPORTED_MODULE_4__components_ListComponent_vue__["a" /* default */], ChatComponent: __WEBPACK_IMPORTED_MODULE_5__components_ChatComponent_vue__["a" /* default */], ChatHeaderComponent: __WEBPACK_IMPORTED_MODULE_6__components_ChatHeaderComponent__["a" /* default */]
   }
 });
 
@@ -12331,7 +12332,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(17)
+var listToStyles = __webpack_require__(20)
 
 /*
 type StyleObject = {
@@ -12544,7 +12545,58 @@ function applyToTag (styleElement, obj) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__templates_ListItemTemplate_vue__ = __webpack_require__(25);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+    methods: {
+        sendMessage: function () {
+            const msgValue = document.getElementById('sendMsg').value;
+            this.$store.dispatch("sendMessage", { msgValue: msgValue });
+            document.getElementById('sendMsg').value = "";
+            return;
+        }
+    }, mounted() {
+        const sendInput = document.getElementById('sendMsg');
+
+        //vue component 위임
+        const _this = this;
+        sendInput.addEventListener('keyup', function (e) {
+            if (e.keyCode === 13) {
+                // code for enter
+                if (sendInput.value && sendInput.value != "") _this.sendMessage();
+            }
+        });
+    }
+});
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__templates_ListItemTemplate_vue__ = __webpack_require__(28);
 //
 //
 //
@@ -12568,7 +12620,7 @@ function applyToTag (styleElement, obj) {
 });
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12590,23 +12642,35 @@ function applyToTag (styleElement, obj) {
 //
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-    name: 'listItem',
-    props: ['item'],
+    props: ['item', 'index'],
     data() {
         return {
             userInfoImage: function (memNo) {
                 return this.$store.state.userInfoList[memNo].image;
             }
         };
+    }, methods: {
+        callChat: function (chatId, targetMemNo) {
+            this.$store.dispatch('changeChatting', { chatId: chatId, target: targetMemNo });
+        }
+    }, created() {
+        //제일 첫번째꺼 호출
+        if (this.index == 0) {
+            const chatId = this.item.chatId;
+            const targetMemNo = this.item.targetMemNo;
+
+            this.callChat(chatId, targetMemNo);
+        }
     }
 });
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__templates_ChatItemTemplate_vue__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__templates_ChatItemTemplate_vue__ = __webpack_require__(32);
+//
 //
 //
 //
@@ -12632,7 +12696,7 @@ function applyToTag (styleElement, obj) {
 });
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12666,918 +12730,44 @@ function applyToTag (styleElement, obj) {
 });
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App_vue__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_js__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vuex__ = __webpack_require__(12);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
-
-new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
-  el: '#app',
-  store: __WEBPACK_IMPORTED_MODULE_2__store_js__["a" /* default */],
-  render: h => h(__WEBPACK_IMPORTED_MODULE_1__App_vue__["a" /* default */])
+/* harmony default export */ __webpack_exports__["a"] = ({
+    name: 'ChatHeaderComponent',
+    data() {
+        return {
+            image: function () {
+                const idx = this.$store.state.isActiveChat.targetNo;
+                return this.$store.state.userInfoList[idx].image;
+            }
+        };
+    },
+    computed: {
+        name: function () {
+            const idx = this.$store.state.isActiveChat.targetNo;
+            return this.$store.state.userInfoList[idx].memNm;
+        }
+    }
 });
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
-            (typeof self !== "undefined" && self) ||
-            window;
-var apply = Function.prototype.apply;
-
-// DOM APIs, for completeness
-
-exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
-};
-exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
-};
-exports.clearTimeout =
-exports.clearInterval = function(timeout) {
-  if (timeout) {
-    timeout.close();
-  }
-};
-
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
-}
-Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-Timeout.prototype.close = function() {
-  this._clearFn.call(scope, this._id);
-};
-
-// Does not start the time, just sets up the members needed.
-exports.enroll = function(item, msecs) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = msecs;
-};
-
-exports.unenroll = function(item) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = -1;
-};
-
-exports._unrefActive = exports.active = function(item) {
-  clearTimeout(item._idleTimeoutId);
-
-  var msecs = item._idleTimeout;
-  if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout)
-        item._onTimeout();
-    }, msecs);
-  }
-};
-
-// setimmediate attaches itself to the global object
-__webpack_require__(12);
-// On some exotic environments, it's not clear which object `setimmediate` was
-// able to install onto.  Search each possibility in the same order as the
-// `setimmediate` library.
-exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
-                       (typeof global !== "undefined" && global.setImmediate) ||
-                       (this && this.setImmediate);
-exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
-                         (typeof global !== "undefined" && global.clearImmediate) ||
-                         (this && this.clearImmediate);
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
-
-/***/ }),
 /* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
-    "use strict";
-
-    if (global.setImmediate) {
-        return;
-    }
-
-    var nextHandle = 1; // Spec says greater than zero
-    var tasksByHandle = {};
-    var currentlyRunningATask = false;
-    var doc = global.document;
-    var registerImmediate;
-
-    function setImmediate(callback) {
-      // Callback can either be a function or a string
-      if (typeof callback !== "function") {
-        callback = new Function("" + callback);
-      }
-      // Copy function arguments
-      var args = new Array(arguments.length - 1);
-      for (var i = 0; i < args.length; i++) {
-          args[i] = arguments[i + 1];
-      }
-      // Store and register the task
-      var task = { callback: callback, args: args };
-      tasksByHandle[nextHandle] = task;
-      registerImmediate(nextHandle);
-      return nextHandle++;
-    }
-
-    function clearImmediate(handle) {
-        delete tasksByHandle[handle];
-    }
-
-    function run(task) {
-        var callback = task.callback;
-        var args = task.args;
-        switch (args.length) {
-        case 0:
-            callback();
-            break;
-        case 1:
-            callback(args[0]);
-            break;
-        case 2:
-            callback(args[0], args[1]);
-            break;
-        case 3:
-            callback(args[0], args[1], args[2]);
-            break;
-        default:
-            callback.apply(undefined, args);
-            break;
-        }
-    }
-
-    function runIfPresent(handle) {
-        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
-        // So if we're currently running a task, we'll need to delay this invocation.
-        if (currentlyRunningATask) {
-            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
-            // "too much recursion" error.
-            setTimeout(runIfPresent, 0, handle);
-        } else {
-            var task = tasksByHandle[handle];
-            if (task) {
-                currentlyRunningATask = true;
-                try {
-                    run(task);
-                } finally {
-                    clearImmediate(handle);
-                    currentlyRunningATask = false;
-                }
-            }
-        }
-    }
-
-    function installNextTickImplementation() {
-        registerImmediate = function(handle) {
-            process.nextTick(function () { runIfPresent(handle); });
-        };
-    }
-
-    function canUsePostMessage() {
-        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
-        // where `global.postMessage` means something completely different and can't be used for this purpose.
-        if (global.postMessage && !global.importScripts) {
-            var postMessageIsAsynchronous = true;
-            var oldOnMessage = global.onmessage;
-            global.onmessage = function() {
-                postMessageIsAsynchronous = false;
-            };
-            global.postMessage("", "*");
-            global.onmessage = oldOnMessage;
-            return postMessageIsAsynchronous;
-        }
-    }
-
-    function installPostMessageImplementation() {
-        // Installs an event handler on `global` for the `message` event: see
-        // * https://developer.mozilla.org/en/DOM/window.postMessage
-        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
-
-        var messagePrefix = "setImmediate$" + Math.random() + "$";
-        var onGlobalMessage = function(event) {
-            if (event.source === global &&
-                typeof event.data === "string" &&
-                event.data.indexOf(messagePrefix) === 0) {
-                runIfPresent(+event.data.slice(messagePrefix.length));
-            }
-        };
-
-        if (global.addEventListener) {
-            global.addEventListener("message", onGlobalMessage, false);
-        } else {
-            global.attachEvent("onmessage", onGlobalMessage);
-        }
-
-        registerImmediate = function(handle) {
-            global.postMessage(messagePrefix + handle, "*");
-        };
-    }
-
-    function installMessageChannelImplementation() {
-        var channel = new MessageChannel();
-        channel.port1.onmessage = function(event) {
-            var handle = event.data;
-            runIfPresent(handle);
-        };
-
-        registerImmediate = function(handle) {
-            channel.port2.postMessage(handle);
-        };
-    }
-
-    function installReadyStateChangeImplementation() {
-        var html = doc.documentElement;
-        registerImmediate = function(handle) {
-            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
-            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
-            var script = doc.createElement("script");
-            script.onreadystatechange = function () {
-                runIfPresent(handle);
-                script.onreadystatechange = null;
-                html.removeChild(script);
-                script = null;
-            };
-            html.appendChild(script);
-        };
-    }
-
-    function installSetTimeoutImplementation() {
-        registerImmediate = function(handle) {
-            setTimeout(runIfPresent, 0, handle);
-        };
-    }
-
-    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
-    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
-    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
-
-    // Don't get fooled by e.g. browserify environments.
-    if ({}.toString.call(global.process) === "[object process]") {
-        // For Node.js before 0.9
-        installNextTickImplementation();
-
-    } else if (canUsePostMessage()) {
-        // For non-IE10 modern browsers
-        installPostMessageImplementation();
-
-    } else if (global.MessageChannel) {
-        // For web workers, where supported
-        installMessageChannelImplementation();
-
-    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
-        // For IE 6–8
-        installReadyStateChangeImplementation();
-
-    } else {
-        // For older browsers
-        installSetTimeoutImplementation();
-    }
-
-    attachTo.setImmediate = setImmediate;
-    attachTo.clearImmediate = clearImmediate;
-}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(13)))
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(3);
-/* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_091dc343_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(32);
-var normalizeComponent = __webpack_require__(0)
-/* script */
-
-
-/* template */
-
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_091dc343_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-
-/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(16);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("b6d83666", content, true, {});
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "body{background-color:#8cc4f8;overflow-y:hidden;overflow-x:hidden;place-items:center}i{cursor:pointer}.frame{width:80%;max-height:800px;height:86vh;background-color:#fff;margin:60px 0;border-radius:1em;display:grid;grid-template-rows:1fr 5fr;grid-template-columns:1fr 2fr}.chatListHeader{border-top-left-radius:1em;background-color:#20263f;border-bottom:1px solid #2d3658;font-weight:30;color:#fff}.chatListHeader .headerTop{display:flex;justify-content:space-between;margin:20px 10px 10px 5px}.chatListHeader .headerTop .fa-search{flex:1}.chatListHeader .headerTop .fas{padding:0 15px;font-size:15px}.chatListHeader .headerBottom{display:flex;justify-content:flex-end;margin:20px 10px 10px}.chatListHeader .headerBottom .fas{padding:3px 8px 10px 5px;font-size:10px}.chatList{-ms-overflow-style:none;scrollbar-width:none}.chatList::-webkit-scrollbar{display:none}.chatList{overflow-y:auto;overflow-x:hidden;background-color:#20263f;border-bottom:1px solid #2d3658;color:#fff;grid-row-start:2;grid-row-end:4;border-bottom-left-radius:1em}.chatListItem{height:80px;display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #3b3e50}.chatListItem .userIcon{padding:0 20px;width:100px}.userIcon img{width:95%;height:95%;border-radius:50%}.chatListItem .msgInfo{flex:auto;padding:0 4px;color:#e3eff8}.chatListItem .sendUser{padding:5px 0;font-size:15px;font-weight:900}.chatListItem .sendMessage{padding-top:2px;font-size:.8rem;text-overflow:ellipsis;white-space:nowrap;word-wrap:normal;overflow:hidden;width:180px}.chatListItem .addInfo{width:23%;display:flex;flex-wrap:wrap;align-content:center;justify-content:space-around;font-size:.6rem}.chatListItem .addInfo i{padding-top:3.8px;color:#d83d3d}.chatListItem .addInfo .time{padding-right:8px;font-size:.8rem}.roomHeader{border-top-right-radius:1em;background-color:#f1f7fc;display:flex;justify-content:space-between;align-items:center;height:70px;padding:0 20px;border-bottom:1px solid #b7bbca}.roomHeader .userName{flex:1;margin:0 0 4px 10px;font-size:1.2rem;font-weight:550;color:20263f}.roomHeader .userIcon{width:35px;height:35px;margin:5px}.msgList{-ms-overflow-style:none;scrollbar-width:none}.msgList::-webkit-scrollbar{display:none}.msgList{overflow-y:auto;overflow-x:hidden;padding:0 20px;font-weight:50}.msgItem{display:flex;padding:20px 0;width:100%;position:relative}.msgItem .userIcon{min-width:50px;width:180px;height:60px;margin:5px}.you .userIcon{margin-right:30px}.me .userIcon{margin-left:30px}.msgItem .userIcon img{width:100%;height:90%;border-radius:50%}.you{width:100%;padding-right:50px}.message{padding-top:70px;padding:30px;box-shadow:0 0 20px 0 #b7c6fd;position:relative}.you .message{border-radius:0 2em 2em 2em;justify-content:flex-start;background-color:#20263f;color:#fff;margin:5px 10px 0}.you .message:before{content:\"\";position:absolute;z-index:2;bottom:0;top:0;left:-20px;height:0;border:1px solid;border-width:0 30px 30px 0;border-color:transparent #20263f transparent transparent}.me{flex-direction:row-reverse;padding-left:50px}.me .message{padding:30px;border-radius:2em 0 2em 2em;justify-content:flex-start;background-color:#f1f3fc;color:#20263f;font-weight:500;margin:0 10px 5px}.me .message:after{content:\"\";position:absolute;z-index:2;bottom:0;top:0;right:-20px;height:0;border:1px solid;border-width:0 0 30px 30px;border-color:transparent transparent transparent #f1f3fc}.inputForm{border-bottom-right-radius:1em;background-color:#f1f7fc;display:flex;height:60px;align-content:center;justify-content:space-between}.inputForm .inputBx{width:65%;text-align:start;margin:10px 15px}.inputForm .inputBx input{padding:5px 10px;width:100%}.inputForm .inputEtc{width:35%;justify-content:space-between;border-left:1px solid #d2daf5;cursor:pointer}.inputForm .inputEtc,.inputForm .inputEtc .icons{margin:10px 5px;display:flex;align-content:center}.inputForm .inputEtc .icons{width:60%;justify-content:space-around;font-size:.4rem;flex-grow:1}.inputForm .inputEtc .icons.more{display:none}.inputForm .inputEtc .sendBtn{font-size:.5rem;padding:0 18px;border-left:1px solid #d2daf5}@media screen and (max-width:1200px){.chatListItem .sendMessage{width:100px}}@media screen and (max-width:1000px){.frame{width:95%;height:95%;min-width:400px;display:grid;grid-template-rows:5fr;grid-template-columns:1fr}.chatList,.chatListHeader{display:none}.roomHeader{border-top-left-radius:1em}.inputForm{border-bottom-left-radius:1em}.inputForm .inputEtc{width:35%}}@media screen and (max-width:600px){.frame{width:100%;height:100%;min-width:400px;display:grid}.inputForm .inputEtc{width:30%}.inputForm .inputEtc .icons{text-align:center;font-size:.5rem}.inputForm .inputEtc .icons.all{display:none}.inputForm .inputEtc .icons.more{display:block}}", ""]);
-
-// exports
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-/**
- * Translates the list format produced by css-loader into something
- * easier to manipulate.
- */
-module.exports = function listToStyles (parentId, list) {
-  var styles = []
-  var newStyles = {}
-  for (var i = 0; i < list.length; i++) {
-    var item = list[i]
-    var id = item[0]
-    var css = item[1]
-    var media = item[2]
-    var sourceMap = item[3]
-    var part = {
-      id: parentId + ':' + i,
-      css: css,
-      media: media,
-      sourceMap: sourceMap
-    }
-    if (!newStyles[id]) {
-      styles.push(newStyles[id] = { id: id, parts: [part] })
-    } else {
-      newStyles[id].parts.push(part)
-    }
-  }
-  return styles
-}
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(19);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(5)("100bbdcd", content, true, {});
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(4)(false);
-// imports
-
-
-// module
-exports.push([module.i, "*,body,html{box-sizing:border-box}body,html{display:flex;justify-content:center;width:100%;height:100%;padding:0;margin:0}button,input{background:none;border:none;outline:none}", ""]);
-
-// exports
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2a4804dc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListHeaderTemplate_vue__ = __webpack_require__(21);
-var normalizeComponent = __webpack_require__(0)
-/* script */
-var __vue_script__ = null
-/* template */
-
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2a4804dc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListHeaderTemplate_vue__["a" /* default */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-
-/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _vm._m(0)}
-var staticRenderFns = [function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"chatListHeader"},[_c('div',{staticClass:"headerTop"},[_c('i',{staticClass:"icon fas fa-align-left fa-fw"}),_vm._v(" "),_c('i',{staticClass:"icon search fas fa-search "}),_vm._v(" "),_c('i',{staticClass:"icon fas fa-ellipsis-v fa-fw"})]),_vm._v(" "),_c('div',{staticClass:"headerBottom"},[_c('span',[_vm._v("date")]),_vm._v(" "),_c('i',{staticClass:"fas fa-chevron-down"})])])}]
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
-
-/***/ }),
-/* 22 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_05a4747b_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatInputFormTemplate_vue__ = __webpack_require__(23);
-var normalizeComponent = __webpack_require__(0)
-/* script */
-var __vue_script__ = null
-/* template */
-
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_05a4747b_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatInputFormTemplate_vue__["a" /* default */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-
-/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _vm._m(0)}
-var staticRenderFns = [function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"inputForm"},[_c('div',{staticClass:"inputBx"},[_c('input',{attrs:{"type":"text","placeholder":"Write your message"}})]),_vm._v(" "),_c('div',{staticClass:"inputEtc"},[_c('div',{staticClass:"icons all"},[_c('i',{staticClass:"fa-grin far fa-3x"}),_vm._v(" "),_c('i',{staticClass:"fa-grin fas fa-3x"}),_vm._v(" "),_c('i',{staticClass:"fa-grin far fa-3x"})]),_vm._v(" "),_c('div',{staticClass:"icons more"},[_c('i',{staticClass:"far fa-plus-square fa-3x"})]),_vm._v(" "),_c('button',{staticClass:"sendBtn"},[_c('i',{staticClass:"far fa-paper-plane fa-3x"})])])])}]
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
-
-/***/ }),
-/* 24 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ListComponent_vue__ = __webpack_require__(6);
-/* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2d7af976_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListComponent_vue__ = __webpack_require__(27);
-var normalizeComponent = __webpack_require__(0)
-/* script */
-
-
-/* template */
-
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ListComponent_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2d7af976_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListComponent_vue__["a" /* default */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-
-/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ListItemTemplate_vue__ = __webpack_require__(7);
-/* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_22da31ea_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListItemTemplate_vue__ = __webpack_require__(26);
-var normalizeComponent = __webpack_require__(0)
-/* script */
-
-
-/* template */
-
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ListItemTemplate_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_22da31ea_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListItemTemplate_vue__["a" /* default */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-
-/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"chatListItem"},[_c('div',{staticClass:"userIcon"},[_c('img',{attrs:{"src":'https://leenamheun.github.io/chatting_only_css/resources/images/chatListIcon/'+_vm.userInfoImage(this.item.targetMemNo)}})]),_vm._v(" "),_c('div',{staticClass:"msgInfo"},[_c('div',{staticClass:"sendUser"},[_vm._v(_vm._s(this.item.targetMemNm))]),_vm._v(" "),_c('div',{staticClass:"sendMessage"},[_vm._v("????대화내용은 천천히 부르자구~~!")])]),_vm._v(" "),_vm._m(0)])}
-var staticRenderFns = [function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"addInfo"},[_c('i',{staticClass:"icon fas fa-star fa-lg"}),_vm._v(" "),_c('span',{staticClass:"time"},[_vm._v("12:30pm")])])}]
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
-
-/***/ }),
-/* 27 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"chatList"},_vm._l((_vm.list),function(item,index){return _c('a',{key:index},[_c('ListItemTemplate',{attrs:{"item":item}})],1)}),0)}
-var staticRenderFns = []
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
-
-/***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatComponent_vue__ = __webpack_require__(8);
-/* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_78dd7a39_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatComponent_vue__ = __webpack_require__(31);
-var normalizeComponent = __webpack_require__(0)
-/* script */
-
-
-/* template */
-
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatComponent_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_78dd7a39_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatComponent_vue__["a" /* default */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-
-/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatItemTemplate_vue__ = __webpack_require__(9);
-/* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2e3984c8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatItemTemplate_vue__ = __webpack_require__(30);
-var normalizeComponent = __webpack_require__(0)
-/* script */
-
-
-/* template */
-
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatItemTemplate_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2e3984c8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatItemTemplate_vue__["a" /* default */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-
-/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:'msgItem '+_vm.flagByMine(this.item.regNo)},[_c('div',{staticClass:"userIcon"},[_c('img',{attrs:{"src":'https://leenamheun.github.io/chatting_only_css/resources/images/chatListIcon/'+_vm.userIcon(this.item.regNo),"alt":""}})]),_vm._v(" "),_c('div',{staticClass:"message"},[_vm._v(_vm._s(this.item.message))])])}
-var staticRenderFns = []
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
-
-/***/ }),
-/* 31 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"msgList"},_vm._l((_vm.list),function(item,index){return _c('div',{key:index},[_c('ChatItemTemplate',{attrs:{"item":item}})],1)}),0)}
-var staticRenderFns = []
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
-
-/***/ }),
-/* 32 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"frame",attrs:{"id":"app"}},[_c('ListHeaderTemplate'),_vm._v(" "),_vm._m(0),_vm._v(" "),_c('ChatComponent'),_vm._v(" "),_c('ListComponent'),_vm._v(" "),_c('ChatInputFormTemplate')],1)}
-var staticRenderFns = [function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"roomHeader"},[_c('div',{staticClass:"userIcon"},[_c('img',{attrs:{"src":""}})]),_vm._v(" "),_c('div',{staticClass:"userName"},[_vm._v("Leenamehun")]),_vm._v(" "),_c('i',{staticClass:"icon fas fa-ellipsis-v fa-fw"})])}]
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
-
-/***/ }),
-/* 33 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__firebase_js__ = __webpack_require__(35);
-
-
-
-
-__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
-
-/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
-    state: {
-        list: [] //채딩방 리스트
-        , chat: [] //대화 리스트
-        , userInfoList: [] //회원정보 -- 이렇게 관리하면 안되는거 안다능
-    }, mutations: {
-        ['setList'](state, list) {
-            return state.list = list;
-        },
-        ['setChatList'](state, list) {
-            return state.list = list;
-        },
-        ['setUserInfoList'](state, userList) {
-            return state.userList = userList;
-        }
-    },
-    actions: {
-        getList: function () {
-            __WEBPACK_IMPORTED_MODULE_2__firebase_js__["a" /* default */].getList().then(res => {
-                this.state.list = res;
-            });
-            this.commit('setList');
-        }, getUserInfoList: function () {
-            __WEBPACK_IMPORTED_MODULE_2__firebase_js__["a" /* default */].getUserInfoList().then(res => {
-                this.state.userInfoList = res;
-            });
-            this.commit('setUserInfoList');
-        }, getChatList: function () {
-            __WEBPACK_IMPORTED_MODULE_2__firebase_js__["a" /* default */].getChatList().then(res => {
-                this.state.chat = res;
-            });
-            this.commit('setChatList');
-        }
-    }
-}));
-
-/***/ }),
-/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14831,7 +14021,991 @@ var index = {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1)))
 
 /***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App_vue__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__store_js__ = __webpack_require__(38);
+
+
+
+
+new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
+  el: '#app',
+  store: __WEBPACK_IMPORTED_MODULE_2__store_js__["a" /* default */],
+  render: h => h(__WEBPACK_IMPORTED_MODULE_1__App_vue__["a" /* default */])
+});
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
+            (typeof self !== "undefined" && self) ||
+            window;
+var apply = Function.prototype.apply;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) {
+  if (timeout) {
+    timeout.close();
+  }
+};
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(scope, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// setimmediate attaches itself to the global object
+__webpack_require__(15);
+// On some exotic environments, it's not clear which object `setimmediate` was
+// able to install onto.  Search each possibility in the same order as the
+// `setimmediate` library.
+exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+                       (typeof global !== "undefined" && global.setImmediate) ||
+                       (this && this.setImmediate);
+exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+                         (typeof global !== "undefined" && global.clearImmediate) ||
+                         (this && this.clearImmediate);
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var registerImmediate;
+
+    function setImmediate(callback) {
+      // Callback can either be a function or a string
+      if (typeof callback !== "function") {
+        callback = new Function("" + callback);
+      }
+      // Copy function arguments
+      var args = new Array(arguments.length - 1);
+      for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i + 1];
+      }
+      // Store and register the task
+      var task = { callback: callback, args: args };
+      tasksByHandle[nextHandle] = task;
+      registerImmediate(nextHandle);
+      return nextHandle++;
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function run(task) {
+        var callback = task.callback;
+        var args = task.args;
+        switch (args.length) {
+        case 0:
+            callback();
+            break;
+        case 1:
+            callback(args[0]);
+            break;
+        case 2:
+            callback(args[0], args[1]);
+            break;
+        case 3:
+            callback(args[0], args[1], args[2]);
+            break;
+        default:
+            callback.apply(undefined, args);
+            break;
+        }
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(runIfPresent, 0, handle);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    run(task);
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function installNextTickImplementation() {
+        registerImmediate = function(handle) {
+            process.nextTick(function () { runIfPresent(handle); });
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        registerImmediate = function(handle) {
+            global.postMessage(messagePrefix + handle, "*");
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        registerImmediate = function(handle) {
+            channel.port2.postMessage(handle);
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        registerImmediate = function(handle) {
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        registerImmediate = function(handle) {
+            setTimeout(runIfPresent, 0, handle);
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(16)))
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(3);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_5fe97f62_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(37);
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_5fe97f62_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(19);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("b6d83666", content, true, {});
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "body{background-color:#8cc4f8;overflow-y:hidden;overflow-x:hidden;place-items:center}i{cursor:pointer}.frame{width:80%;max-height:800px;height:86vh;background-color:#fff;margin:60px 0;border-radius:1em;display:grid;grid-template-rows:1fr 5fr;grid-template-columns:1fr 2fr}.chatListHeader{border-top-left-radius:1em;background-color:#20263f;border-bottom:1px solid #2d3658;font-weight:30;color:#fff}.chatListHeader .headerTop{display:flex;justify-content:space-between;margin:20px 10px 10px 5px}.chatListHeader .headerTop .fa-search{flex:1}.chatListHeader .headerTop .fas{padding:0 15px;font-size:15px}.chatListHeader .headerBottom{display:flex;justify-content:flex-end;margin:20px 10px 10px}.chatListHeader .headerBottom .fas{padding:3px 8px 10px 5px;font-size:10px}.chatList{-ms-overflow-style:none;scrollbar-width:none}.chatList::-webkit-scrollbar{display:none}.chatList{overflow-y:auto;overflow-x:hidden;background-color:#20263f;border-bottom:1px solid #2d3658;color:#fff;grid-row-start:2;grid-row-end:4;border-bottom-left-radius:1em}.chatListItem{height:80px;display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #3b3e50}.chatListItem .userIcon{padding:0 20px;width:100px}.userIcon img{width:95%;height:95%;border-radius:50%}.chatListItem .msgInfo{flex:auto;padding:0 4px;color:#e3eff8}.chatListItem .sendUser{padding:5px 0;font-size:15px;font-weight:900}.chatListItem .sendMessage{padding-top:2px;font-size:.8rem;text-overflow:ellipsis;white-space:nowrap;word-wrap:normal;overflow:hidden;width:180px}.chatListItem .addInfo{width:23%;display:flex;flex-wrap:wrap;align-content:center;justify-content:space-around;font-size:.6rem}.chatListItem .addInfo i{padding-top:3.8px;color:#d83d3d}.chatListItem .addInfo .time{padding-right:8px;font-size:.8rem}.roomHeader{border-top-right-radius:1em;background-color:#f1f7fc;display:flex;justify-content:space-between;align-items:center;height:70px;padding:0 20px;border-bottom:1px solid #b7bbca}.roomHeader .userName{flex:1;margin:0 0 4px 10px;font-size:1.2rem;font-weight:550;color:20263f}.roomHeader .userIcon{width:35px;height:35px;margin:5px}.msgList{-ms-overflow-style:none;scrollbar-width:none}.msgList::-webkit-scrollbar{display:none}.noMsgList{height:100%;background-color:red}.msgList{overflow-y:auto;overflow-x:hidden;padding:0 20px;font-weight:50}.msgItem{display:flex;padding:20px 0;width:100%;position:relative}.msgItem .userIcon{min-width:50px;min-height:50px;width:80px;height:80px;margin:5px}.you .userIcon{margin-right:30px}.me .userIcon{margin-left:30px}.msgItem .userIcon img{width:100%;height:80%;border-radius:50%}.you{width:100%;padding-right:50px}.message{padding-top:70px;padding:30px;box-shadow:0 0 20px 0 #b7c6fd;position:relative}.you .message{border-radius:0 2em 2em 2em;justify-content:flex-start;background-color:#20263f;color:#fff;margin:5px 10px 0}.you .message:before{content:\"\";position:absolute;z-index:2;bottom:0;top:0;left:-20px;height:0;border:1px solid;border-width:0 30px 30px 0;border-color:transparent #20263f transparent transparent}.me{flex-direction:row-reverse;padding-left:50px}.me .message{padding:30px;border-radius:2em 0 2em 2em;justify-content:flex-start;background-color:#f1f3fc;color:#20263f;font-weight:500;margin:0 10px 5px}.me .message:after{content:\"\";position:absolute;z-index:2;bottom:0;top:0;right:-20px;height:0;border:1px solid;border-width:0 0 30px 30px;border-color:transparent transparent transparent #f1f3fc}.inputForm{border-bottom-right-radius:1em;background-color:#f1f7fc;display:flex;height:60px;align-content:center;justify-content:space-between}.inputForm .inputBx{width:65%;text-align:start;margin:10px 15px}.inputForm .inputBx input{padding:5px 10px;width:100%}.inputForm .inputEtc{width:35%;justify-content:space-between;border-left:1px solid #d2daf5;cursor:pointer}.inputForm .inputEtc,.inputForm .inputEtc .icons{margin:10px 5px;display:flex;align-content:center}.inputForm .inputEtc .icons{width:60%;justify-content:space-around;font-size:.4rem;flex-grow:1}.inputForm .inputEtc .icons.more{display:none}.inputForm .inputEtc .sendBtn{font-size:.5rem;padding:0 18px;border-left:1px solid #d2daf5}@media screen and (max-width:1200px){.chatListItem .sendMessage{width:100px}}@media screen and (max-width:1000px){.frame{width:95%;height:95%;min-width:400px;display:grid;grid-template-rows:5fr;grid-template-columns:1fr}.chatList,.chatListHeader{display:none}.roomHeader{border-top-left-radius:1em}.inputForm{border-bottom-left-radius:1em}.inputForm .inputEtc{width:35%}}@media screen and (max-width:600px){.frame{width:100%;height:100%;min-width:400px;display:grid}.inputForm .inputEtc{width:30%}.inputForm .inputEtc .icons{text-align:center;font-size:.5rem}.inputForm .inputEtc .icons.all{display:none}.inputForm .inputEtc .icons.more{display:block}}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+/**
+ * Translates the list format produced by css-loader into something
+ * easier to manipulate.
+ */
+module.exports = function listToStyles (parentId, list) {
+  var styles = []
+  var newStyles = {}
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i]
+    var id = item[0]
+    var css = item[1]
+    var media = item[2]
+    var sourceMap = item[3]
+    var part = {
+      id: parentId + ':' + i,
+      css: css,
+      media: media,
+      sourceMap: sourceMap
+    }
+    if (!newStyles[id]) {
+      styles.push(newStyles[id] = { id: id, parts: [part] })
+    } else {
+      newStyles[id].parts.push(part)
+    }
+  }
+  return styles
+}
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(22);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("100bbdcd", content, true, {});
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(false);
+// imports
+
+
+// module
+exports.push([module.i, "*,body,html{box-sizing:border-box}body,html{display:flex;justify-content:center;width:100%;height:100%;padding:0;margin:0}button,input{background:none;border:none;outline:none}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2a4804dc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListHeaderTemplate_vue__ = __webpack_require__(24);
+var normalizeComponent = __webpack_require__(0)
+/* script */
+var __vue_script__ = null
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2a4804dc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListHeaderTemplate_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _vm._m(0)}
+var staticRenderFns = [function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"chatListHeader"},[_c('div',{staticClass:"headerTop"},[_c('i',{staticClass:"icon fas fa-align-left fa-fw"}),_vm._v(" "),_c('i',{staticClass:"icon search fas fa-search "}),_vm._v(" "),_c('i',{staticClass:"icon fas fa-ellipsis-v fa-fw"})]),_vm._v(" "),_c('div',{staticClass:"headerBottom"},[_c('span',[_vm._v("date")]),_vm._v(" "),_c('i',{staticClass:"fas fa-chevron-down"})])])}]
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatInputFormComponent_vue__ = __webpack_require__(6);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_a188e492_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatInputFormComponent_vue__ = __webpack_require__(26);
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatInputFormComponent_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_a188e492_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatInputFormComponent_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"inputForm"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"inputEtc"},[_vm._m(1),_vm._v(" "),_vm._m(2),_vm._v(" "),_c('button',{staticClass:"sendBtn",on:{"click":_vm.sendMessage}},[_c('i',{staticClass:"far fa-paper-plane fa-3x"})])])])}
+var staticRenderFns = [function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"inputBx"},[_c('input',{attrs:{"type":"text","id":"sendMsg","placeholder":"Write your message"}})])},function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"icons all"},[_c('i',{staticClass:"fa-grin far fa-3x"}),_vm._v(" "),_c('i',{staticClass:"fa-grin fas fa-3x"}),_vm._v(" "),_c('i',{staticClass:"fa-grin far fa-3x"})])},function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"icons more"},[_c('i',{staticClass:"far fa-plus-square fa-3x"})])}]
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 27 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ListComponent_vue__ = __webpack_require__(7);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_14e6402e_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListComponent_vue__ = __webpack_require__(30);
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ListComponent_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_14e6402e_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListComponent_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ListItemTemplate_vue__ = __webpack_require__(8);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0c2f7c11_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListItemTemplate_vue__ = __webpack_require__(29);
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ListItemTemplate_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0c2f7c11_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ListItemTemplate_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"chatListItem",on:{"click":function($event){return _vm.callChat(_vm.item.chatId, _vm.item.targetMemNo)}}},[_c('div',{staticClass:"userIcon"},[_c('img',{attrs:{"src":'https://leenamheun.github.io/chatting_only_css/resources/images/chatListIcon/'+_vm.userInfoImage(this.item.targetMemNo)}})]),_vm._v(" "),_c('div',{staticClass:"msgInfo"},[_c('div',{staticClass:"sendUser"},[_vm._v(_vm._s(this.item.targetMemNm))]),_vm._v(" "),_c('div',{staticClass:"sendMessage"},[_vm._v("????대화내용은 천천히 부르자구~~!")])]),_vm._v(" "),_vm._m(0)])}
+var staticRenderFns = [function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"addInfo"},[_c('i',{staticClass:"icon fas fa-star fa-lg"}),_vm._v(" "),_c('span',{staticClass:"time"},[_vm._v("12:30pm")])])}]
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"chatList"},_vm._l((_vm.list),function(item,index){return _c('a',{key:index},[_c('ListItemTemplate',{attrs:{"item":item,"index":index}})],1)}),0)}
+var staticRenderFns = []
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatComponent_vue__ = __webpack_require__(9);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_08888940_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatComponent_vue__ = __webpack_require__(34);
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatComponent_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_08888940_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatComponent_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatItemTemplate_vue__ = __webpack_require__(10);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2e3984c8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatItemTemplate_vue__ = __webpack_require__(33);
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatItemTemplate_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2e3984c8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatItemTemplate_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:'msgItem '+_vm.flagByMine(this.item.regNo)},[_c('div',{staticClass:"userIcon"},[_c('img',{attrs:{"src":'https://leenamheun.github.io/chatting_only_css/resources/images/chatListIcon/'+_vm.userIcon(this.item.regNo),"alt":""}})]),_vm._v(" "),_c('div',{staticClass:"message"},[_vm._v(_vm._s(this.item.message))])])}
+var staticRenderFns = []
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 34 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"msgList"},_vm._l((_vm.list),function(item,index){return _c('div',{key:index},[_c('ChatItemTemplate',{attrs:{"item":item}})],1)}),0)}
+var staticRenderFns = []
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
 /* 35 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatHeaderComponent_vue__ = __webpack_require__(11);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0afb7012_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatHeaderComponent_vue__ = __webpack_require__(36);
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_ChatHeaderComponent_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0afb7012_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_ChatHeaderComponent_vue__["a" /* default */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"roomHeader"},[_c('div',{staticClass:"userIcon"},[_c('img',{attrs:{"src":'https://leenamheun.github.io/chatting_only_css/resources/images/chatListIcon/'+_vm.image()}})]),_vm._v(" "),_c('div',{staticClass:"userName"},[_vm._v(_vm._s(_vm.name))]),_vm._v(" "),_c('i',{staticClass:"icon fas fa-ellipsis-v fa-fw"})])}
+var staticRenderFns = []
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 37 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"frame",attrs:{"id":"app"}},[_c('ListHeaderTemplate'),_vm._v(" "),_c('ChatHeaderComponent'),_vm._v(" "),_c('ChatComponent'),_vm._v(" "),_c('ListComponent'),_vm._v(" "),_c('ChatInputFormComponent')],1)}
+var staticRenderFns = []
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+
+/***/ }),
+/* 38 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__firebase_js__ = __webpack_require__(39);
+
+
+
+
+__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].use(__WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */]);
+
+/* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vuex__["a" /* default */].Store({
+    state: {
+        list: [] //채딩방 리스트
+        , chat: [] //대화 리스트
+        , userInfoList: [] //회원정보 -- 이렇게 관리하면 안되는거 안다능
+        , isActiveChat: {} //현재 대화중인 채팅
+    }, mutations: {
+        ['setList'](state, list) {
+            return state.list = list;
+        },
+        ['setChatList'](state, chat) {
+            return state.chat = chat;
+        },
+        ['setActive'](state, chatId) {
+            return state.chatId = chatId;
+        },
+        ['setUserInfoList'](state, userList) {
+            return state.userList = userList;
+        }
+    },
+    actions: {
+        getList: function () {
+            //채팅방 리스트 
+            __WEBPACK_IMPORTED_MODULE_2__firebase_js__["a" /* default */].getList().then(res => {
+                this.state.list = res;
+            });
+            this.commit('setList');
+        }, getUserInfoList: function () {
+            //회원정보 조회
+            __WEBPACK_IMPORTED_MODULE_2__firebase_js__["a" /* default */].getUserInfoList().then(res => {
+                this.state.userInfoList = res;
+            });
+            this.commit('setUserInfoList');
+        }, getChatList: function ({ commit, state }) {
+            //채팅
+            __WEBPACK_IMPORTED_MODULE_2__firebase_js__["a" /* default */].getChatList(state.isActiveChat.chatId).then(res => {
+                state.chat = res;
+            });
+            commit('setChatList');
+        }, changeChatting: function (store, payload) {
+            //채팅 대상 변경
+            store.state.isActiveChat = { chatId: payload.chatId, targetNo: payload.target };
+            store.commit('setActive');
+            store.dispatch('getChatList');
+        }, sendMessage: function (store, payload) {
+            //메시지 보내기
+            const date = new Date();
+            const current = date.getFullYear() + "" + ("0" + (date.getMonth() + 1)).slice(-2) + "" + ("0" + date.getDate()).slice(-2) + "" + ("0" + date.getHours()).slice(-2) + "" + ("0" + date.getMinutes()).slice(-2);
+
+            const obj = {
+                message: payload.msgValue,
+                chatId: this.state.isActiveChat.chatId,
+                regNo: 1 //로그인 유저가 없으므로 픽스
+                , regDts: current
+            };
+            __WEBPACK_IMPORTED_MODULE_2__firebase_js__["a" /* default */].sendMessage(obj).then(() => {
+                store.dispatch('getChatList');
+            });
+        }
+    }
+}));
+
+/***/ }),
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14849,6 +15023,14 @@ var firebaseConfig = {
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+//고유 아이디 만들기
+function guid() {
+    function s4() {
+        return ((1 + Math.random()) * 0x10000 | 0).toString(16).substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
 
 const fireObj = {
     getList: (() => {
@@ -14886,11 +15068,11 @@ const fireObj = {
         };
     })(),
     getChatList: (() => {
-        var _ref3 = _asyncToGenerator(function* () {
+        var _ref3 = _asyncToGenerator(function* (chatId) {
             let list = [];
-            const query = firebase.database().ref("Chat").orderByChild('chatId').equalTo(1);
+            const query = firebase.database().ref("Chat/" + chatId).orderByChild("regDts");
 
-            yield query.once('value', function (snapshot) {
+            yield query.on('value', function (snapshot) {
                 snapshot.forEach(element => {
                     list.push(element.val());
                 });
@@ -14898,11 +15080,19 @@ const fireObj = {
             return list;
         });
 
-        return function getChatList() {
+        return function getChatList(_x) {
             return _ref3.apply(this, arguments);
         };
-    })()
+    })(),
+    sendMessage: (() => {
+        var _ref4 = _asyncToGenerator(function* (obj) {
+            firebase.database().ref('Chat/' + obj.chatId + '/' + guid()).set(obj);
+        });
 
+        return function sendMessage(_x2) {
+            return _ref4.apply(this, arguments);
+        };
+    })()
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (fireObj);
